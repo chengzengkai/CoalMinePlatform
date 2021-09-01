@@ -1,0 +1,9 @@
+.vs/
+.svn/
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+*.ignore
+*.sln
+

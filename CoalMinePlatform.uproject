@@ -1,0 +1,16 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{FCE6A668-4F11-728A-8096-21886CD96717}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "CoalMinePlatform",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
+	]
+}
