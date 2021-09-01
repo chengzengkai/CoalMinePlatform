@@ -2,35 +2,39 @@
 
 
 #include "CoalMineTaskBase.h"
+#include "CoalMineTaskManager.h"
 
 // Sets default values
 ACoalMineTaskBase::ACoalMineTaskBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	SetHidden(true);
 
+	RootComp = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	SetRootComponent(RootComp);
+
+	bNetLoadOnClient = false;
+
+	BillBoardComp = CreateDefaultSubobject<UBillboardComponent>(TEXT("Billboard"));
+	BillBoardComp->SetupAttachment(RootComp);
 }
 
-// Called when the game starts or when spawned
-void ACoalMineTaskBase::BeginPlay()
+void ACoalMineTaskBase::OnInitialize_Implementation(ACoalMineTaskManager* NewManager)
 {
-	Super::BeginPlay();
-	
+	Status = ETaskStatus::Running;
+	TaskManager = NewManager;
 }
 
-// Called every frame
-void ACoalMineTaskBase::Tick(float DeltaTime)
+ETaskStatus ACoalMineTaskBase::OnUpdate_Implementation(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-
+	return Status;
 }
 
-void ACoalMineTaskBase::DoTask()
+void ACoalMineTaskBase::OnFinish_Implementation()
 {
 }
 
-
-bool ACoalMineTaskBase::IsTaskFinished_Implementation()
+void ACoalMineTaskBase::Abort_Implementation()
 {
-	return false;
+	Status = ETaskStatus::Idle;
 }

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CoalMineTaskControl.h"
+#include "CoalMineTaskBase.h"
 #include "CoalMineTaskControl_Sequence.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class COALMINEPLATFORM_API ACoalMineTaskControl_Sequence : public ACoalMineTaskControl
+class COALMINEPLATFORM_API ACoalMineTaskControl_Sequence : public ACoalMineTaskBase
 {
 	GENERATED_BODY()
 public:

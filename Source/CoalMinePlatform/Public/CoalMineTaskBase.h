@@ -4,11 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CoalMineTaskInterface.h"
+#include "Components/BillboardComponent.h"
 #include "CoalMineTaskBase.generated.h"
 
-UCLASS()
-class COALMINEPLATFORM_API ACoalMineTaskBase : public AActor,public ICoalMineTaskInterface
+class ACoalMineTaskManager;
+
+UENUM(BlueprintType)
+enum class ETaskStatus :uint8
+{
+	Idle,
+	Running,
+	Success,
+	Failure
+};
+
+UCLASS(HideCategories = (Physics, Collision, Lighting, Rendering, Activation, Cooking, Input, HLOD, Mobile))
+class COALMINEPLATFORM_API ACoalMineTaskBase : public AActor
 {
 	GENERATED_BODY()
 	
@@ -16,23 +27,34 @@ public:
 	// Sets default values for this actor's properties
 	ACoalMineTaskBase();
 
-	virtual bool IsTaskFinished_Implementation();
+public:
+	UFUNCTION(BlueprintNativeEvent, Category = "CoalMine Task")
+	void OnInitialize(ACoalMineTaskManager* NewManager);
+	virtual void OnInitialize_Implementation(ACoalMineTaskManager* NewManager);
 
-	UFUNCTION(BlueprintCallable,Category="CoalMine Task")
-		void SetTaskFinish() { bTaskFinished = true; }
+	UFUNCTION(BlueprintNativeEvent, Category = "CoalMine Task")
+	ETaskStatus OnUpdate(float DeltaTime);
+	virtual ETaskStatus OnUpdate_Implementation(float DeltaTime);
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintNativeEvent, Category = "CoalMine Task")
+	void OnFinish();
+	virtual void OnFinish_Implementation();
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintNativeEvent, Category = "CoalMine Task")
+	void Abort();
+	virtual void Abort_Implementation();
 
-	virtual void DoTask();
+public:
+	UPROPERTY(BlueprintReadWrite, Category = "CoalMine Task")
+	ETaskStatus Status;
 
-private:
+	UPROPERTY(BlueprintReadOnly, Category = "CoalMine Task")
+	ACoalMineTaskManager* TaskManager;
 
-	bool bTaskFinished;
+public:
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (AllowPrivateAccess = "true"), Category = GameplayLevelTask)
+		USceneComponent* RootComp;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (AllowPrivateAccess = "true"), Category = GameplayLevelTask)
+		UBillboardComponent* BillBoardComp;
 };

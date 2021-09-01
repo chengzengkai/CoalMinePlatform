@@ -9,6 +9,6 @@ ACoalMineTaskControl_Selector::ACoalMineTaskControl_Selector()
     if (IconImg.Succeeded())
     {
         UE_LOG(LogTemp, Warning, TEXT("Sequence Task Control Icon Is Found"));
-        BillboardComp->SetSprite(IconImg.Object);
+        BillBoardComp->SetSprite(IconImg.Object);
     }
 }
