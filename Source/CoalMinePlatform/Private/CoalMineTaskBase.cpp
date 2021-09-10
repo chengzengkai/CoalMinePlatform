@@ -32,6 +32,7 @@ ETaskStatus ACoalMineTaskBase::OnUpdate_Implementation(float DeltaTime)
 
 void ACoalMineTaskBase::OnFinish_Implementation()
 {
+
 }
 
 void ACoalMineTaskBase::Abort_Implementation()

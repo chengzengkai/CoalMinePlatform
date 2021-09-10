@@ -7,6 +7,7 @@
 #include "CoalMineTaskManager.generated.h"
 
 class ACoalMineTaskBase;
+class ACoalMineTaskManager;
 
 UCLASS(hidecategories = (Rendering))
 class COALMINEPLATFORM_API ACoalMineTaskManager : public AActor
@@ -21,19 +22,19 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void ExecuteTasks();
-
-	virtual bool IsTasksFinish();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere,Category = TaskManager)
 	class UBillboardComponent* BillboardComp;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, meta = (AllowPrivateAccess = "true"), Category = TaskManager)
+	class UManagerVisualizationComponent* TaskManagerVisualizationComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = TaskManager)
+	ACoalMineTaskBase* InitialTask;
 
 private:
 	UPROPERTY(Transient)

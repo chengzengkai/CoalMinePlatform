@@ -3,17 +3,36 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CoalMineTaskBase.h"
+#include "CoalMineCompositionTask.h"
+#include "SequentialVisualizationComponent.h"
 #include "CoalMineTaskControl_Sequence.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class COALMINEPLATFORM_API ACoalMineTaskControl_Sequence : public ACoalMineTaskBase
+class COALMINEPLATFORM_API ACoalMineTaskControl_Sequence : public ACoalMineCompositionTask
 {
 	GENERATED_BODY()
 public:
 	ACoalMineTaskControl_Sequence();
+
+	virtual void OnInitialize_Implementation(ACoalMineTaskManager* NewTaskManager)override;
+
+	virtual ETaskStatus OnUpdate_Implementation(float DeltaTime)override;
+
+	virtual void Abort_Implementation()override;
+
+public:
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (AllowPrivateAccess = "true"),Category = CoalMineTask)
+	USequentialVisualizationComponent* SequentialVisualizationComp;
+
+private:
+	UPROPERTY()
+	ACoalMineTaskBase* CurrentTask;
+
+	int CurrentTaskIndex;
+
+
 	
 };

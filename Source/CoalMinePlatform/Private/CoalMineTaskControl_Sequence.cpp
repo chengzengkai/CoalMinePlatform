@@ -14,4 +14,20 @@ ACoalMineTaskControl_Sequence::ACoalMineTaskControl_Sequence()
         UE_LOG(LogTemp,Warning,TEXT("Sequence Task Control Icon Is Found"));
         BillBoardComp->SetSprite(IconImg.Object);
     }
+    SequentialVisualizationComp = CreateDefaultSubobject<USequentialVisualizationComponent>(TEXT("SequentialTaskVisualizationComp"));
+    SequentialVisualizationComp->SetupAttachment(BillBoardComp);
+    CurrentTaskIndex = 0;
+}
+
+void ACoalMineTaskControl_Sequence::OnInitialize_Implementation(ACoalMineTaskManager* NewTaskManager)
+{
+}
+
+ETaskStatus ACoalMineTaskControl_Sequence::OnUpdate_Implementation(float DeltaTime)
+{
+    return ETaskStatus();
+}
+
+void ACoalMineTaskControl_Sequence::Abort_Implementation()
+{
 }
