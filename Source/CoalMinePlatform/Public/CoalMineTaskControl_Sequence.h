@@ -23,16 +23,19 @@ public:
 
 	virtual void Abort_Implementation()override;
 
+private:
+	void AbortCurrentTasks();
+
 public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (AllowPrivateAccess = "true"),Category = CoalMineTask)
 	USequentialVisualizationComponent* SequentialVisualizationComp;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (AllowPrivateAccess = "true"), Category = CoalMineTask)
+	bool bContinueWhenSubTaskFailed;
 private:
 	UPROPERTY()
 	ACoalMineTaskBase* CurrentTask;
 
 	int CurrentTaskIndex;
 
-
-	
 };

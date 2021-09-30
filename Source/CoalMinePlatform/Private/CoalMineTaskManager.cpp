@@ -38,30 +38,91 @@ void ACoalMineTaskManager::BeginPlay()
 void ACoalMineTaskManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	TArray<ACoalMineTaskBase*> TasksToDelete;
-	for (ACoalMineTaskBase* CurrentTask : CurrentTasks)
+	if (Status == ETaskManagerStatus::TaskManager_Running)
 	{
-		if (CurrentTask->Status != ETaskStatus::Running)
-		{
-			CurrentTask->OnInitialize(this);
-		}
-		switch (CurrentTask->OnUpdate(DeltaTime))
-		{
-		case ETaskStatus::Failure:
-			TasksToDelete.AddUnique(CurrentTask);
-			CurrentTask->OnFinish();
-			break;
+		TArray<ACoalMineTaskBase*> TasksToDelete;
 
-		case ETaskStatus::Success:
-			TasksToDelete.AddUnique(CurrentTask);
-			CurrentTask->OnFinish();
-			break;
-		default:
-			break;
-		}
-		for (ACoalMineTaskBase* TaskToDelete : TasksToDelete)
+		ETaskManagerStatus PendingStatus = ETaskManagerStatus::TaskManager_Running;
+
+		for (ACoalMineTaskBase* CurrentTask : CurrentTasks)
 		{
-			CurrentTasks.RemoveSwap(TaskToDelete);
+			if (CurrentTask->Status != ETaskStatus::Running)
+			{
+				CurrentTask->OnInitialize(this);
+			}
+			switch (CurrentTask->OnUpdate(DeltaTime))
+			{
+			case ETaskStatus::Failure:
+
+				PendingStatus = ETaskManagerStatus::TaskManager_Failure;
+				TasksToDelete.AddUnique(CurrentTask);
+				CurrentTask->OnFinish();
+				break;
+
+			case ETaskStatus::Success:
+
+				PendingStatus = ETaskManagerStatus::TaskManager_Success;
+				TasksToDelete.AddUnique(CurrentTask);
+				CurrentTask->OnFinish();
+				break;
+			default:
+				break;
+			}
+			for (ACoalMineTaskBase* TaskToDelete : TasksToDelete)
+			{
+				CurrentTasks.RemoveSwap(TaskToDelete);
+			}
+			if (CurrentTasks.Num() < 1)
+			{
+				FinishLevel(PendingStatus);
+			}
+		}
+	}	
+}
+
+void ACoalMineTaskManager::StartLevel_Implementation()
+{
+	Status = ETaskManagerStatus::TaskManager_Running;
+	
+	for (ACoalMineTaskBase* Task:CurrentTasks)
+	{
+		if (Task && Task->Status == ETaskStatus::Running)
+		{
+			Task->Abort();
 		}
 	}
+	if (InitialTask&&InitialTask->Status==ETaskStatus::Running)
+	{
+		InitialTask->Abort();
+	}
+	CurrentTasks.Add(InitialTask);
+}
+
+void ACoalMineTaskManager::FinishLevel_Implementation(ETaskManagerStatus NewStatus)
+{
+	Status = NewStatus;
+	OnLevelFinish(Status);
+}
+
+void ACoalMineTaskManager::AbortLevel_Implementation()
+{
+	for (ACoalMineTaskBase* Task:CurrentTasks)
+	{
+		if (Task&&Task->Status==ETaskStatus::Running)
+		{
+			Task->Abort();
+		}
+	}
+	Status = ETaskManagerStatus::TaskManager_Idle;
+	OnAbortLevel();
+}
+
+void ACoalMineTaskManager::OnLevelFinish_Implementation(ETaskManagerStatus NewStatus)
+{
+
+}
+
+void ACoalMineTaskManager::OnAbortLevel_Implementation()
+{
+
 }

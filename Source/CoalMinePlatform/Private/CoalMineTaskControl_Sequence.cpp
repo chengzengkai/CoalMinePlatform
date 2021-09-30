@@ -21,13 +21,69 @@ ACoalMineTaskControl_Sequence::ACoalMineTaskControl_Sequence()
 
 void ACoalMineTaskControl_Sequence::OnInitialize_Implementation(ACoalMineTaskManager* NewTaskManager)
 {
+    Super::OnInitialize_Implementation(NewTaskManager);
+
+    if (CurrentTask && CurrentTask->Status == ETaskStatus::Running)
+    {
+        CurrentTask->Abort();
+    }
+
+    CurrentTaskIndex = 0;
+    CurrentTask = SubTasks[CurrentTaskIndex];
 }
 
 ETaskStatus ACoalMineTaskControl_Sequence::OnUpdate_Implementation(float DeltaTime)
 {
-    return ETaskStatus();
+    if (CurrentTask)
+    {
+        if (CurrentTask->Status != ETaskStatus::Running)
+        {
+            CurrentTask->OnInitialize(TaskManager);
+        }
+
+        bool bTaskChanged = false;
+        switch (CurrentTask->OnUpdate(DeltaTime))
+        {
+            case ETaskStatus::Success:
+            {
+                CurrentTask->OnFinish();
+                CurrentTaskIndex++;
+                bTaskChanged = true;
+            }
+            break;
+            case ETaskStatus::Failure:
+            {
+                Status = ETaskStatus::Failure;
+                return Status;
+            }
+            break;
+            default:
+                break;
+        }
+        if (bTaskChanged)
+        {
+            if (CurrentTaskIndex<SubTasks.Num())
+            {
+                CurrentTask = SubTasks[CurrentTaskIndex];
+            }
+            else
+            {
+                Status = ETaskStatus::Success;
+            }
+        }
+    }
+    else
+    {
+        Status = ETaskStatus::Success;
+    }
+    return Status;
 }
 
 void ACoalMineTaskControl_Sequence::Abort_Implementation()
 {
+    Super::Abort_Implementation();
+    if (CurrentTask && CurrentTask->Status == ETaskStatus::Running)
+    {
+        CurrentTask->Abort();
+    }
 }

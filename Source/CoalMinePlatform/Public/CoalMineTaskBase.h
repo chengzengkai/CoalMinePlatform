@@ -28,18 +28,22 @@ public:
 	ACoalMineTaskBase();
 
 public:
+	// Task initialize 
 	UFUNCTION(BlueprintNativeEvent, Category = "CoalMine Task")
 	void OnInitialize(ACoalMineTaskManager* NewManager);
 	virtual void OnInitialize_Implementation(ACoalMineTaskManager* NewManager);
 
+	//Task Update Logic,tick to update task status
 	UFUNCTION(BlueprintNativeEvent, Category = "CoalMine Task")
 	ETaskStatus OnUpdate(float DeltaTime);
 	virtual ETaskStatus OnUpdate_Implementation(float DeltaTime);
 
+	//task finish callback 
 	UFUNCTION(BlueprintNativeEvent, Category = "CoalMine Task")
 	void OnFinish();
 	virtual void OnFinish_Implementation();
 
+	//abort task 
 	UFUNCTION(BlueprintNativeEvent, Category = "CoalMine Task")
 	void Abort();
 	virtual void Abort_Implementation();

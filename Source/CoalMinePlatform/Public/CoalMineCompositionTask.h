@@ -16,5 +16,5 @@ class COALMINEPLATFORM_API ACoalMineCompositionTask : public ACoalMineTaskBase
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = CoalMineTask)
 		TArray<ACoalMineTaskBase*>SubTasks;
-	
+
 };
